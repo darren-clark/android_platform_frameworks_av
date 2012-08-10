@@ -60,6 +60,10 @@ struct OMXCodec : public MediaSource,
 
         // Secure decoding mode
         kUseSecureInputBuffers = 256,
+
+        // Hardware codecs list first
+        kPreferHardwareCodecs = 512,
+
     };
     static sp<MediaSource> Create(
             const sp<IOMX> &omx,

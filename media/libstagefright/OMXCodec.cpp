@@ -178,6 +178,29 @@ static int CompareSoftwareCodecsFirst(
     return 0;
 }
 
+// A sort order in which OMX hardware codecs are first, followed
+// by other OMX software codecs and non-OMX sofware codecs
+// followed by everything else (if exists)
+static int CompareHardwareCodecsFirst(
+        const OMXCodec::CodecNameAndQuirks *elem1,
+        const OMXCodec::CodecNameAndQuirks *elem2) {
+
+    bool isSoftwareCodec1 = IsSoftwareCodec(elem1->mName.string());
+    bool isSoftwareCodec2 = IsSoftwareCodec(elem2->mName.string());
+
+    if (!isSoftwareCodec1) {
+        return -1;
+    }
+
+    if (!isSoftwareCodec2) {
+        return 1;
+    }
+
+    return 0;
+}
+
+
+
 // static
 void OMXCodec::findMatchingCodecs(
         const char *mime,
@@ -227,7 +250,9 @@ void OMXCodec::findMatchingCodecs(
         }
     }
 
-    if (flags & kPreferSoftwareCodecs) {
+    if (flags & kPreferHardwareCodecs) {
+        matchingCodecs->sort(CompareHardwareCodecsFirst);
+    } else if (flags & kPreferSoftwareCodecs) {
         matchingCodecs->sort(CompareSoftwareCodecsFirst);
     }
 }
@@ -565,9 +590,16 @@ status_t OMXCodec::configureCodec(const sp<MetaData> &meta) {
     }
 
     initOutputFormat(meta);
+    const char* extString;
+    if(!strncmp(mComponentName, "OMX.SEC.", 8)) {
+        extString = "OMX.SEC.index.ThumbnailMode";
+    } else if ((!strncmp(mComponentName, "OMX.Intel.",10))) {
+        extString = "OMX.Intel.index.ThumbnailMode";
+    }
 
     if ((mFlags & kClientNeedsFramebuffer)
-            && !strncmp(mComponentName, "OMX.SEC.", 8)) {
+            && ((!strncmp(mComponentName, "OMX.SEC.", 8))
+              || (!strncmp(mComponentName, "OMX.Intel.", 10)))) {
         // This appears to no longer be needed???
 
         OMX_INDEXTYPE index;
@@ -575,7 +607,7 @@ status_t OMXCodec::configureCodec(const sp<MetaData> &meta) {
         status_t err =
             mOMX->getExtensionIndex(
                     mNode,
-                    "OMX.SEC.index.ThumbnailMode",
+                    extString,
                     &index);
 
         if (err != OK) {
@@ -1541,6 +1573,16 @@ status_t OMXCodec::allocateBuffersOnPort(OMX_U32 portIndex) {
     CODEC_LOGV("allocating %lu buffers of size %lu on %s port",
             def.nBufferCountActual, def.nBufferSize,
             portIndex == kPortIndexInput ? "input" : "output");
+    if ((mFlags & kClientNeedsFramebuffer) &&
+                    (!strncmp(mComponentName, "OMX.Intel.", 8))) {
+            def.nBufferSize = (def.format.video.nFrameWidth *
+                            def.format.video.nFrameHeight * 3) / 2;
+            ALOGV("%s, after modifying size, def.nBufferSize %d, width %d, height %d",
+                            __FUNCTION__, def.nBufferSize,
+                            def.format.video.nFrameWidth,
+                            def.format.video.nFrameHeight);
+    }
+
 
     size_t totalSize = def.nBufferCountActual * def.nBufferSize;
     mDealer[portIndex] = new MemoryDealer(totalSize, "OMXCodec");
