@@ -55,7 +55,7 @@
 
 #include <cutils/properties.h>
 
-#define USE_SURFACE_ALLOC 1
+#define USE_SURFACE_ALLOC 0
 #define FRAME_DROP_FREQ 0
 
 namespace android {
@@ -1490,7 +1490,7 @@ status_t AwesomePlayer::initVideoDecoder(uint32_t flags) {
             mClient.interface(), mVideoTrack->getFormat(),
             false, // createEncoder
             mVideoTrack,
-            NULL, flags, USE_SURFACE_ALLOC ? mNativeWindow : NULL);
+            NULL, flags | OMXCodec::kClientNeedsFramebuffer | OMXCodec::kPreferHardwareCodecs, USE_SURFACE_ALLOC ? mNativeWindow : NULL);
 
     if (mVideoSource != NULL) {
         int64_t durationUs;
