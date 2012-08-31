@@ -33,6 +33,8 @@
 #include "include/OggExtractor.h"
 #include "include/WAVExtractor.h"
 #include "include/WVMExtractor.h"
+#include "include/AsfExtractor.h"
+
 
 #include "matroska/MatroskaExtractor.h"
 
@@ -122,6 +124,7 @@ void DataSource::RegisterDefaultSniffers() {
     RegisterSniffer(SniffAAC);
     RegisterSniffer(SniffMPEG2PS);
     RegisterSniffer(SniffWVM);
+    RegisterSniffer(SniffAsf);
 
     char value[PROPERTY_VALUE_MAX];
     if (property_get("drm.service.enabled", value, NULL)
