@@ -42,6 +42,7 @@
 #include <camera/ICamera.h>
 #include <camera/CameraParameters.h>
 #include <gui/Surface.h>
+#include <cutils/properties.h>
 
 #include <utils/Errors.h>
 #include <sys/types.h>
@@ -173,7 +174,18 @@ status_t StagefrightRecorder::setVideoEncoder(video_encoder ve) {
     }
 
     if (ve == VIDEO_ENCODER_DEFAULT) {
-        mVideoEncoder = VIDEO_ENCODER_H263;
+        char prop[PROPERTY_VALUE_MAX];
+        property_get("ro.video.encoder.default", prop, "");
+        if (strcmp(prop, "h263") == 0) {
+            mVideoEncoder = VIDEO_ENCODER_H263;
+        } else if (strcmp(prop, "h264") == 0) {
+            mVideoEncoder = VIDEO_ENCODER_H264;
+        } else if (strcmp(prop, "m4v") == 0) {
+            mVideoEncoder = VIDEO_ENCODER_MPEG_4_SP;
+        } else {
+            ALOGE_IF(prop[0], "Invalid ro.video.encoder.default property, expect one of h263,h264,m4v");
+            mVideoEncoder = VIDEO_ENCODER_H263;
+        }
     } else {
         mVideoEncoder = ve;
     }
