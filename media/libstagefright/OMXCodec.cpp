@@ -34,7 +34,6 @@
 #include <media/stagefright/MediaCodecList.h>
 #include <media/stagefright/MediaExtractor.h>
 #include <media/stagefright/MetaData.h>
-#include <media/stagefright/MetaDataExt.h>
 #include <media/stagefright/OMXCodec.h>
 #include <media/stagefright/Utils.h>
 #include <media/stagefright/SkipCutBuffer.h>
@@ -522,8 +521,6 @@ status_t OMXCodec::configureCodec(const sp<MetaData> &meta) {
 
             CHECK(meta->findData(kKeyVorbisBooks, &type, &data, &size));
             addCodecSpecificData(data, size);
-        } else if (meta->findData(kKeyConfigData, &type, &data, &size)) {
-            addCodecSpecificData(data, size);
         }
     }
 
@@ -830,9 +827,6 @@ void OMXCodec::setVideoInputFormat(
         compressionFormat = OMX_VIDEO_CodingMPEG4;
     } else if (!strcasecmp(MEDIA_MIMETYPE_VIDEO_H263, mime)) {
         compressionFormat = OMX_VIDEO_CodingH263;
-    } else if (!strncasecmp(MEDIA_MIMETYPE_VIDEO_WMV, mime,
-                            strlen(MEDIA_MIMETYPE_VIDEO_WMV))) {
-        compressionFormat = OMX_VIDEO_CodingWMV;
     } else {
         ALOGE("Not a supported video mime type: %s", mime);
         CHECK(!"Should not be here. Not a supported video mime type.");
@@ -920,11 +914,6 @@ void OMXCodec::setVideoInputFormat(
             break;
         }
 
-        case OMX_VIDEO_CodingWMV:
-        {
-            ALOGI("setupWMVEncoderParameters is to be implemented.");
-            break;
-        }
         default:
             CHECK(!"Support for this compressionFormat to be implemented.");
             break;
@@ -1235,9 +1224,6 @@ status_t OMXCodec::setVideoOutputFormat(
         compressionFormat = OMX_VIDEO_CodingVPX;
     } else if (!strcasecmp(MEDIA_MIMETYPE_VIDEO_MPEG2, mime)) {
         compressionFormat = OMX_VIDEO_CodingMPEG2;
-    } else if (!strncasecmp(MEDIA_MIMETYPE_VIDEO_WMV, mime,
-                            strlen(MEDIA_MIMETYPE_VIDEO_WMV))) {
-        compressionFormat = OMX_VIDEO_CodingWMV;
     } else {
         ALOGE("Not a supported video mime type: %s", mime);
         CHECK(!"Should not be here. Not a supported video mime type.");
@@ -1434,8 +1420,6 @@ void OMXCodec::setComponentRole(
             "video_decoder.mpeg4", "video_encoder.mpeg4" },
         { MEDIA_MIMETYPE_VIDEO_H263,
             "video_decoder.h263", "video_encoder.h263" },
-        { MEDIA_MIMETYPE_VIDEO_WMV,
-            "video_decoder.wmv", "NULL" },
         { MEDIA_MIMETYPE_VIDEO_VPX,
             "video_decoder.vpx", "video_encoder.vpx" },
         { MEDIA_MIMETYPE_AUDIO_RAW,

@@ -30,7 +30,6 @@
 #include "include/WVMExtractor.h"
 #include "include/FLACExtractor.h"
 #include "include/AACExtractor.h"
-#include "include/AsfExtractor.h"
 
 #include "matroska/MatroskaExtractor.h"
 
@@ -39,7 +38,6 @@
 #include <media/stagefright/MediaDefs.h>
 #include <media/stagefright/MediaExtractor.h>
 #include <media/stagefright/MetaData.h>
-#include <media/stagefright/MetaDataExt.h>
 #include <utils/String8.h>
 
 namespace android {
@@ -124,8 +122,6 @@ sp<MediaExtractor> MediaExtractor::Create(
         ret = new AACExtractor(source, meta);
     } else if (!strcasecmp(mime, MEDIA_MIMETYPE_CONTAINER_MPEG2PS)) {
         ret = new MPEG2PSExtractor(source);
-    } else if (!strcasecmp(mime, MEDIA_MIMETYPE_CONTAINER_ASF)) {
-        ret = new AsfExtractor(source);
     }
 
     if (ret != NULL) {
