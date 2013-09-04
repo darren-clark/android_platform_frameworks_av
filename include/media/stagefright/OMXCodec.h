@@ -289,6 +289,13 @@ private:
     void setRawAudioFormat(
             OMX_U32 portIndex, int32_t sampleRate, int32_t numChannels);
 
+    void setAC3Format(int32_t numChannels, int32_t sampleRate);
+    status_t setWMAFormat(const sp<MetaData> &inputFormat);
+    status_t setWMVFormat(const sp<MetaData> &inputFormat);
+    status_t setRAFormat(const sp<MetaData> &inputFormat);
+    status_t setAPEFormat(const sp<MetaData> &inputFormat);
+    status_t setDTSFormat(const sp<MetaData> &inputFormat);
+
     status_t allocateBuffers();
     status_t allocateBuffersOnPort(OMX_U32 portIndex);
     status_t allocateOutputBuffersFromNativeWindow();
