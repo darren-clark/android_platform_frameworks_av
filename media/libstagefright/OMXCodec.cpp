@@ -1232,6 +1232,11 @@ status_t OMXCodec::setVideoOutputFormat(
         }
         compressionFormat = OMX_VIDEO_CodingWMV;
     } else if (!strcasecmp(MEDIA_MIMETYPE_VIDEO_RV, mime)) {
+        status_t err = setRVFormat(meta);
+        if (err != OK) {
+            CODEC_LOGE("setRVFormat() failed (err = %d)", err);
+            return err;
+        }
         compressionFormat = OMX_VIDEO_CodingRV;
     } else if (!strcasecmp(MEDIA_MIMETYPE_VIDEO_VC1, mime)) {
         compressionFormat = OMX_VIDEO_CodingWMV;
@@ -3760,6 +3765,39 @@ status_t OMXCodec::setRAFormat(const sp<MetaData> &meta)
 
     err = mOMX->setParameter(
                     mNode, OMX_IndexParamAudioRa, &paramRA, sizeof(paramRA));
+    return err;
+}
+
+status_t OMXCodec::setRVFormat(const sp<MetaData> &meta)
+{
+    int32_t version = 0;
+    OMX_VIDEO_PARAM_RVTYPE paramRV;
+
+    if (mIsEncoder) {
+        CODEC_LOGE("RV encoding not supported");
+        return OK;
+    }
+
+    CHECK(meta->findInt32(kKeyRVVersion, &version));
+
+    InitOMXParams(&paramRV);
+    paramRV.nPortIndex = kPortIndexInput;
+
+    status_t err = mOMX->getParameter(
+                       mNode, OMX_IndexParamVideoRv, &paramRV, sizeof(paramRV));
+    if (err != OK)
+        return err;
+
+    if (version == kTypeRVVer_G2) {
+        paramRV.eFormat = OMX_VIDEO_RVFormatG2;
+    } else if (version == kTypeRVVer_8) {
+        paramRV.eFormat = OMX_VIDEO_RVFormat8;
+    } else if (version == kTypeRVVer_9) {
+        paramRV.eFormat = OMX_VIDEO_RVFormat9;
+    }
+
+    err = mOMX->setParameter(
+                    mNode, OMX_IndexParamVideoRv, &paramRV, sizeof(paramRV));
     return err;
 }
 
