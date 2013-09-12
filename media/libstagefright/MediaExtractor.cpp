@@ -92,8 +92,13 @@ sp<MediaExtractor> MediaExtractor::Create(
         }
     }
 
+    AString extractorName;
     MediaExtractor *ret = NULL;
-    if (!strcasecmp(mime, MEDIA_MIMETYPE_CONTAINER_MPEG4)
+    if (meta.get() && meta->findString("extended-extractor-use", &extractorName)
+            && sPlugin.create) {
+        ALOGI("Use extended extractor for the special mime(%s) or codec", mime);
+        ret = sPlugin.create(source, mime, meta);
+    } else if (!strcasecmp(mime, MEDIA_MIMETYPE_CONTAINER_MPEG4)
             || !strcasecmp(mime, "audio/mp4")) {
         ret = new MPEG4Extractor(source);
     } else if (!strcasecmp(mime, MEDIA_MIMETYPE_AUDIO_MPEG)) {
