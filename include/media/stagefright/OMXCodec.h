@@ -296,6 +296,8 @@ private:
     status_t setRVFormat(const sp<MetaData> &inputFormat);
     status_t setAPEFormat(const sp<MetaData> &inputFormat);
     status_t setDTSFormat(const sp<MetaData> &inputFormat);
+    status_t setFFmpegVideoFormat(const sp<MetaData> &inputFormat);
+    status_t setFFmpegAudioFormat(const sp<MetaData> &inputFormat);
 
     status_t allocateBuffers();
     status_t allocateBuffersOnPort(OMX_U32 portIndex);
