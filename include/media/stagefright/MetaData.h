@@ -50,7 +50,9 @@ enum {
     kKeySampleRate        = 'srte',  // int32_t (audio sampling rate Hz)
     kKeyFrameRate         = 'frmR',  // int32_t (video frame rate fps)
     kKeyBitRate           = 'brte',  // int32_t (bps)
-    kKeyBitspersample     = '#bps',  // int64_t
+    kKeyCodecId           = 'cdid',  // int32_t
+    kKeyBitspersample     = '#bps',  // int32_t
+    kKeySampleFormat      = 'sfmt',  // int32_t
     kKeyESDS              = 'esds',  // raw data
     kKeyAACProfile        = 'aacp',  // int32_t
     kKeyAVCC              = 'avcc',  // raw data
