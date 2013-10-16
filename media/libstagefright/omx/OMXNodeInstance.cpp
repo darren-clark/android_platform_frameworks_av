@@ -300,7 +300,8 @@ status_t OMXNodeInstance::enableGraphicBuffers(
 
     if (err != OMX_ErrorNone) {
         if (enable) {
-            ALOGE("OMX_GetExtensionIndex %s failed (err=%d)", name, err);
+            ALOGE("OMX_GetExtensionIndex %s failed with error %d (0x%08x)",
+                 name, err, err);
         }
 
         return StatusFromOMXError(err);
@@ -337,7 +338,8 @@ status_t OMXNodeInstance::getGraphicBufferUsage(
     OMX_ERRORTYPE err = OMX_GetExtensionIndex(mHandle, name, &index);
 
     if (err != OMX_ErrorNone) {
-        ALOGE("OMX_GetExtensionIndex %s failed", name);
+        ALOGE("OMX_GetExtensionIndex %s failed with error %d (0x%08x)",
+            name, err, err);
 
         return StatusFromOMXError(err);
     }
@@ -380,7 +382,8 @@ status_t OMXNodeInstance::storeMetaDataInBuffers_l(
 
     OMX_ERRORTYPE err = OMX_GetExtensionIndex(mHandle, name, &index);
     if (err != OMX_ErrorNone) {
-        ALOGE("OMX_GetExtensionIndex %s failed", name);
+        ALOGE("OMX_GetExtensionIndex %s failed with error %d (0x%08x)",
+           name, err, err);
 
         return StatusFromOMXError(err);
     }
@@ -512,7 +515,8 @@ status_t OMXNodeInstance::useGraphicBuffer(
     OMX_ERRORTYPE err = OMX_GetExtensionIndex(mHandle, name, &index);
 
     if (err != OMX_ErrorNone) {
-        ALOGE("OMX_GetExtensionIndex %s failed", name);
+        ALOGE("OMX_GetExtensionIndex %s failed with error %d (0x&08x)",
+            name, err, err);
 
         return StatusFromOMXError(err);
     }
