@@ -249,6 +249,10 @@ uint32_t OMXCodec::getComponentQuirks(
                 index, "output-buffers-are-unreadable")) {
         quirks |= kOutputBuffersAreUnreadable;
     }
+    if (list->codecHasQuirk(
+                index, "requires-loaded-to-idle-after-allocation")) {
+        quirks |= kRequiresLoadedToIdleAfterAllocation;
+    }
 
     return quirks;
 }
@@ -951,7 +955,6 @@ static OMX_U32 setPFramesSpacing(int32_t iFramesInterval, int32_t frameRate) {
         return 0;
     }
     OMX_U32 ret = frameRate * iFramesInterval - 1;
-    CHECK(ret > 1);
     return ret;
 }
 
